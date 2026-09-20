@@ -1,11 +1,12 @@
 import api from "../../utils/axios";
+import {useDispatch} from "react-redux";
 
 const getCurrentUser = async () => {
     try {   
         const { data } = await api.get("/api/me");
-        console.log(data);
+        return data; // Return the user data
     } catch (error) {
-        console.error("Error fetching current user:", error);
+        return null; // Return null if there's an error (e.g., user not authenticated)
       
     }
 };

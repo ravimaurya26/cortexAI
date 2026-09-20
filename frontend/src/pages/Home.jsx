@@ -2,12 +2,16 @@ import { signInWithPopup } from 'firebase/auth'
 import api from '../../utils/axios'
 import { auth, googleProvider } from '../../utils/firebase'
 import { FcGoogle } from "react-icons/fc";
+import { useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
 
 function Home() {
+  const {userData} = useSelector((state) => state.user)
+  const dispatch = useDispatch()
   const handleLogin = async (token) => {
     try {
       const { data } = await api.post("/api/auth/login", { token })
-      console.log(data)
+      dispatch(setUserData(data.user))
     } catch (err) {
       console.log(err)
     }
@@ -24,7 +28,7 @@ function Home() {
   return (
     <div className="w-full h-screen bg-black text-white overflow-hidden">
     
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    {!userData && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
        <div className= ' w-[340px] bg-[#13151c] border border-white/[0.08] rounded-2xl p-7 flex flex-col items-center gap-5'>
          <div className='flex flex-col items-center gap-2 '>
           <h2 className='text-[17px]font-semibold text-slate-100 tracking-tight'>Welcome to CortexAI</h2>
@@ -36,7 +40,8 @@ function Home() {
           Continue with Google
          </button>
        </div>
-      </div>
+      </div>}
+      
     </div>
   )
 }
