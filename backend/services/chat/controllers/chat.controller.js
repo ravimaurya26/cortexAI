@@ -1,3 +1,5 @@
+import Conversation from "../Models/conversation.model.js";
+import Message from "../Models/message.model.js";
 export const createConversation = async (req, res) => {
     try {
         const userId = req.headers['x-user-id'];
@@ -67,7 +69,10 @@ export const getMessage = async (req, res) => {
         return res.status(200).json(message); 
     }
     catch (error) {
-        return res.status(500).json({ message: `Error getting message: ${error}` });
-    }
+    console.error("CREATE CONVERSATION ERROR:", error);
+
+    return res.status(500).json({
+        message: `Error creating conversation: ${error.message}`
+    });  }
 }
 

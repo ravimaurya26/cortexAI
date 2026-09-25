@@ -9,7 +9,7 @@ const port= process.env.PORT
 
 const app = express()
 app.use(express.json())
-app.use("/",router)
+app.use("/api/chat",router)
 
 
 app.get("/",(req,res)=>{

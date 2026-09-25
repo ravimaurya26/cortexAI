@@ -3,7 +3,7 @@ import {createConversation, getConversations, saveMessage,getMessage, updateConv
 
 const router = express.Router()
 
-router.get("/conversation",createConversation)     
+router.get("/create-conversation",createConversation)     
 router.get("/getConversation",getConversations)
 router.post("/updateConversation",updateConversation)
 router.post("/saveMessage",saveMessage)
