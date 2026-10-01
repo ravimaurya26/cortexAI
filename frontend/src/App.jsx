@@ -6,7 +6,7 @@ import api from '../utils/axios'
 import Home from './pages/Home'
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUserData } from "./redux/userSlice";
+import { setUserdata } from './redux/userSlice'
 import getCurrentUser from './features/getCurrentUser'
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
   useEffect(() => {
     const getUser = async () => {
       const data =await getCurrentUser()
-      dispatch(setUserData(data));
+      dispatch(setUserdata(data));
     }
     getUser()
   }, [])

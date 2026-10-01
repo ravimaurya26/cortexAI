@@ -5,11 +5,11 @@ const userSlice = createSlice({
         userData: null,
     },
     reducers: {
-        setUserData: (state, action) => {
+        setUserdata: (state, action) => {
             state.userData = action.payload;
         },
     },
 })
 
-export const { setUserData } = userSlice.actions;
+export const { setUserdata } = userSlice.actions;
 export default userSlice.reducer;

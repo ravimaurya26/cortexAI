@@ -1,4 +1,4 @@
-import { setUserData } from '../redux/userSlice';
+import { setUserdata } from '../redux/userSlice';
 import { signInWithPopup } from 'firebase/auth'
 import api from '../../utils/axios'
 import { auth, googleProvider } from '../../utils/firebase'
@@ -15,7 +15,8 @@ function Home() {
   const handleLogin = async (token) => {
     try {
       const { data } = await api.post("/api/auth/login", { token })
-      dispatch(setUserData(data.user))
+   
+      dispatch(setUserdata(data))
     } catch (err) {
       console.log(err)
     }
