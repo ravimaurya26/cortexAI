@@ -18,16 +18,19 @@ import { createConversation } from '../features/createConversation';
 import {
   setConversation,
   addConversation,
+  setSelectedConversation
 } from '../redux/conversationSlice';
 
 import logOut from '../features/logOut';
 import { setUserdata } from '../redux/userSlice';
+import { setMessages } from '../redux/messageSlice';
 
 
 function SideBar() {
 
   const [collapsed, setCollapsed] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -60,11 +63,18 @@ function SideBar() {
 
   const handleNewChat = async () => {
 
+    if (isCreating) return;
+    setIsCreating(true);
+
     const data = await createConversation();
 
     if (data) {
       dispatch(addConversation(data));
+      dispatch(setSelectedConversation(data));
+      dispatch(setMessages([]));
     }
+
+    setIsCreating(false);
 
   };
 
@@ -131,7 +141,7 @@ function SideBar() {
               key={conversation._id}
 
               onClick={() => {
-                dispatch(setConversation([conversation]));
+                dispatch(setSelectedConversation(conversation));
               }}
 
               title={conversation.title || "New Conversation"}
@@ -140,11 +150,10 @@ function SideBar() {
               w-9 h-9 rounded-xl border-none cursor-pointer
               transition-all duration-150
 
-              ${
-                selectedConversation?._id === conversation._id
+              ${selectedConversation?._id === conversation._id
                   ? "bg-indigo-500/20 text-indigo-400"
                   : "bg-transparent text-slate-500 hover:bg-white/[0.05] hover:text-slate-200"
-              }`}
+                }`}
             >
 
               <MessageSquare size={16} />
@@ -330,16 +339,17 @@ function SideBar() {
 
                   <div
                     key={conversation._id}
-
-                    className="px-3 py-2.5 rounded-lg
-                    text-sm text-slate-300
-                    hover:bg-white/[0.05]
-                    hover:text-slate-100
-                    cursor-pointer transition-colors"
+                    onClick={() => {
+                      dispatch(setSelectedConversation(conversation));
+                    }}
+                    className={`px-3 py-2.5 rounded-lg
+                    text-sm cursor-pointer transition-colors
+                        ${selectedConversation?._id === conversation._id
+                        ? "bg-indigo-500/10 text-indigo-400"
+                        : "text-slate-300 hover:bg-white/[0.05] hover:text-slate-100"
+                      }`}
                   >
-
                     {conversation.title || 'New Conversation'}
-
                   </div>
 
                 ))}
@@ -491,4 +501,3 @@ function SideBar() {
 
 
 export default SideBar;
-

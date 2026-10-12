@@ -1,23 +1,66 @@
 import axios from "axios";
 import { graph } from "../graph/graph.js";
+import { addMessage } from "../config/memory.js";
 
-export const agent = async (req,res) => {
-    try {
-        const { prompt, conversationId  } = req.body;  // Extract prompt and conversationId from the request body
-        await axios.post('${process.env.AGENT_SERVICE_URL}/save-message', { 
+
+export const agent = async (req, res) => {
+try {
+const { prompt, conversationId } = req.body;
+
+    // Validate request
+    if (!prompt || !conversationId) {
+        return res.status(400).json({
+            message: "Prompt and conversationId are required"
+        });
+    }
+
+    // Save the user's message in MongoDB
+    await axios.post(
+        `${process.env.CHAT_SERVICE_URL}/api/chat/saveMessage`,
+        {
             conversationId,
             role: "user",
-            content: prompt});
-
-            const result = await graph.invoke({ // Invoke the graph with the provided state
-                       prompt,conversationId
-            })
-
-            const response = result.aiResponse
-            return res.status(200).json({ aiResponse: response });
-
+            content: prompt
         }
-    catch (error) {
-        return res.status(500).json({ message: `Error saving user message: ${error}` });
-    }   
-}    
+    );
+
+    // Generate AI response using previous conversation history
+    const result = await graph.invoke({
+        prompt,
+        conversationId
+    });
+
+    // Save the user's message in Redis memory
+    await addMessage(conversationId, "user", prompt);
+
+    // Save the assistant's response in Redis memory
+    await addMessage(
+        conversationId,
+        "assistant",
+        result.aiResponse
+    );
+
+    // Save the assistant's response in MongoDB
+    await axios.post(
+        `${process.env.CHAT_SERVICE_URL}/api/chat/saveMessage`,
+        {
+            conversationId,
+            role: "assistant",
+            content: result.aiResponse
+        }
+    );
+
+    // Return the AI response to the frontend
+    return res.status(200).json({
+        aiResponse: result.aiResponse
+    });
+
+} catch (error) {
+    console.error("AGENT ERROR:", error.message);
+
+    return res.status(500).json({
+        message: `Error in agent: ${error.message}`
+    });
+}
+
+};
