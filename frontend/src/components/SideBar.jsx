@@ -117,7 +117,7 @@ function SideBar() {
           transition-colors duration-150 bg-transparent border-none
           cursor-pointer mb-3"
 
-          onClick={handleNewChat}
+          onClick={()=> dispatch(setSelectedConversation(null))}
 
           title="New Chat"
         >
@@ -305,7 +305,7 @@ function SideBar() {
             transition-all duration-200 hover:-translate-y-0.5
             border-none cursor-pointer"
 
-            onClick={handleNewChat}
+            onClick={()=> dispatch(setSelectedConversation(null))}
           >
 
             <Plus size={15} />
