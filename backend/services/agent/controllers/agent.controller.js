@@ -5,7 +5,7 @@ import { addMessage } from "../config/memory.js";
 
 export const agent = async (req, res) => {
 try {
-const { prompt, conversationId } = req.body;
+const { prompt, conversationId,agent } = req.body;
 
     // Validate request
     if (!prompt || !conversationId) {
@@ -27,7 +27,8 @@ const { prompt, conversationId } = req.body;
     // Generate AI response using previous conversation history
     const result = await graph.invoke({
         prompt,
-        conversationId
+        conversationId,
+        agent
     });
 
     // Save the user's message in Redis memory
@@ -46,13 +47,15 @@ const { prompt, conversationId } = req.body;
         {
             conversationId,
             role: "assistant",
-            content: result.aiResponse
+            content: result.aiResponse,
+            images: result.images
         }
     );
 
     // Return the AI response to the frontend
     return res.status(200).json({
-        aiResponse: result.aiResponse
+        answer:result.aiResponse,
+        images:result.images
     });
 
 } catch (error) {

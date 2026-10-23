@@ -16,8 +16,22 @@ export const chatAgent = async (state) => {
     // Ensure history is always an array
     const safeHistory = Array.isArray(history) ? history : [];
 
+    const searchContext = state.searchResults?
+    `Web Search Results:
+     ${JSON.stringify(state.searchResults)}
+    Answer the user using only the above search results. 
+    `:""
+
     const systemPrompt = `
 You are CortexAI, an intelligent AI assistant.
+  
+   ${searchContext}
+
+    if searcContext exists:
+   -Use search result to answer
+   -Do not mention internal tools.
+
+
 
 Rules:
 

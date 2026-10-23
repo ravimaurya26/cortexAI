@@ -3,6 +3,12 @@ import { getModel } from "../config/llmModels.js";
 const VALID_AGENTS = ["chat", "search", "vision", "ppt", "pdf", "coding"];
 
 export const router = async (state) => {
+  
+  if(state.agent && state.agent !=="auto") {
+    return { agent: state.agent };
+  }
+
+
   try {
     const llm = await getModel("router");
 
@@ -34,4 +40,4 @@ Selected agent:`;
     console.error("Router failed, defaulting to chat:", error);
     return { agent: "chat" };
   }
-};
+}; 
