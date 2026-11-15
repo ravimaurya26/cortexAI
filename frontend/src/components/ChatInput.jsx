@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Paperclip, Mic, Send, Zap, Images } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import sendMessage from '../features/sendMessage'
-import { addMessage } from '../redux/messageSlice';
+import { addMessage,setArtifacts} from '../redux/messageSlice';
 import { createConversation } from '../features/createConversation';
 import { setSelectedConversation, addConversation } from '../redux/conversationSlice';
 import { updateConversation } from '../features/updateConversation';
@@ -43,10 +43,13 @@ function ChatInput() {
     setValue("")
 
     const data = await sendMessage(payload)
+    dispatch(setArtifacts(data.artifacts || []))
     console.log(data)
 
+
+
     if (data?.aiResponse) {
-      dispatch(addMessage({ role: "assistant", content: data.answer ,images:data.images }))
+      dispatch(addMessage({ role: "assistant", content: data?.answer ,images:data.images }))
     }
   }
 

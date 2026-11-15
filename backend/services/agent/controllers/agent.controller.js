@@ -47,15 +47,17 @@ const { prompt, conversationId,agent } = req.body;
         {
             conversationId,
             role: "assistant",
-            content: result.aiResponse,
-            images: result.images
+            content: result?.aiResponse,
+            images: result?.images,
+            artifacts:result?.artifacts
         }
     );
 
     // Return the AI response to the frontend
     return res.status(200).json({
         answer:result.aiResponse,
-        images:result.images
+        images:result.images,
+        artifacts:result.artifacts
     });
 
 } catch (error) {
