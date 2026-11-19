@@ -52,18 +52,16 @@ ${state.prompt}
 
     await uploadToS3(filename, buffer, "image/png")
 
-    const expirySeconds = 24 * 60 * 60
+    const expirySeconds = 10 * 60 
     const downloadUrl = await getFromS3(filename, expirySeconds)
 
     // IMPORTANT: no indentation here, otherwise markdown shows it as a code block
     const aiResponse = [
-      "# 🖼️ Image Generated Successfully",
-      "",
       `![Generated Image](${downloadUrl})`,
       "",
       `📩 [Download Image](${downloadUrl})`,
       "",
-      "⏳ Links expire in 24 hours.",
+      "⏳ Links expire in 10 min.",
     ].join("\n")
 
     return { ...state, aiResponse }
