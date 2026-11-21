@@ -24,6 +24,7 @@ import {
 import logOut from '../features/logOut';
 import { setUserdata } from '../redux/userSlice';
 import { setMessages } from '../redux/messageSlice';
+import BillingDrawer from './BillingDrawer';
 
 
 function SideBar() {
@@ -42,6 +43,8 @@ function SideBar() {
   const {
     userData
   } = useSelector((state) => state.user);
+
+  const [showBilling,setShowBilling]= useState(false)
 
 
   useEffect(() => {
@@ -117,7 +120,7 @@ function SideBar() {
           transition-colors duration-150 bg-transparent border-none
           cursor-pointer mb-3"
 
-          onClick={()=> dispatch(setSelectedConversation(null))}
+          onClick={() => dispatch(setSelectedConversation(null))}
 
           title="New Chat"
         >
@@ -305,7 +308,7 @@ function SideBar() {
             transition-all duration-200 hover:-translate-y-0.5
             border-none cursor-pointer"
 
-            onClick={()=> dispatch(setSelectedConversation(null))}
+            onClick={() => dispatch(setSelectedConversation(null))}
           >
 
             <Plus size={15} />
@@ -445,6 +448,7 @@ function SideBar() {
               <div className="flex gap-1">
 
                 <button
+                  onClick={()=>setShowBilling(true)}
                   className="flex items-center justify-center
                   w-7 h-7 rounded-[7px] border-none
                   bg-transparent text-yellow-600 cursor-pointer
@@ -492,6 +496,11 @@ function SideBar() {
         </div>
 
       </div>
+
+      <BillingDrawer
+      open={showBilling}
+      onClose={()=>setShowBilling(false) }
+      />
 
     </div>
 
