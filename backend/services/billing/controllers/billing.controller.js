@@ -2,6 +2,7 @@ import axios from "axios"
 import { PLANS } from "../config/Plans.js"
 import razorpay from "../config/razorpay.js"
 import Payment from "../models/payement.model.js"
+import { configDotenv } from "dotenv"
 
 export const createOrder=async (req,res)=>{
     try {
@@ -59,7 +60,7 @@ export const verifyPayment = async () => {
     payment.paymentId=razorpay_payment_id
     await payment.save()
 
-    await axios.post(`${process.env.AUTH_SERVICE}/update-plan`,{userId:payment.userId,plan:Payment.plan,
+    await axios.post(`${process.env.AUTH_SERVICE_URL}/update-plan`,{userId:payment.userId,plan:Payment.plan,
         credits:payment.credits  })
     
     return res.status(200).json ({message:"Payement Verified"})  

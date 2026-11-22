@@ -1,21 +1,25 @@
 import proxy from "express-http-proxy";
 
 export const proxyWithHeaders = (serviceUrl) => {
-  return proxy(serviceUrl, {
-    proxyReqPathResolver: (req) => {
-      console.log("Forwarding:", req.method, req.originalUrl);
+    return proxy(serviceUrl, {
 
-      return req.originalUrl;
-    },
+        // Forward the correct path to the microservice
+        proxyReqPathResolver: (req) => {
+            console.log("Original URL:", req.originalUrl);
+            console.log("Forwarding URL:", req.url);
 
-    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
-      console.log("USER OBJECT:", srcReq.user);
+            return req.url;
+        },
 
-      if (srcReq.user) {
-        proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
-      }
+        // Forward authenticated user information
+        proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+            console.log("USER OBJECT:", srcReq.user);
 
-      return proxyReqOpts;
-    },
-  });
+            if (srcReq.user?.userId) {
+                proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+            }
+
+            return proxyReqOpts;
+        }
+    });
 };

@@ -17,9 +17,9 @@ function Home() {
       const { data } = await api.post("/api/auth/login", { token })
    
       dispatch(setUserdata(data))
-    } catch (err) {
-      console.log(err)
-    }
+    } catch (error) {
+    console.error("Login Error:", error.response?.data || error.message);
+}
   }
 
   const googleLogin = async () => {
