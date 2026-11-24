@@ -2,6 +2,7 @@ import { getModel } from "../config/llmModels.js"
 import axios from "axios"
 import { uploadToS3 } from "../utils/uploadToS3.js"
 import { getFromS3 } from "../utils/getFroms3.js"
+import { deductCredits } from "../utils/deductCredits.js";
 
 export const visionAgent = async (state) => {
   try {
@@ -40,6 +41,7 @@ ${state.prompt}
       responseType: "arraybuffer",
       timeout: 120000,
     })
+    await deductCredits(state.userId , "vision")
 
     // Make sure we really got an image, not an error page
     const contentType = imageRes.headers["content-type"] || ""

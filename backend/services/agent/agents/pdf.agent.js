@@ -2,6 +2,7 @@ import { getModel } from "../config/llmModels.js"
 import generatePdf from "../utils/generatePdf.js"
 import { getFromS3 } from "../utils/getFroms3.js"
 import { uploadToS3 } from "../utils/uploadToS3.js"
+import { deductCredits } from "../utils/deductCredits.js";
 
 export const pdfAgent = async (state) => {
   try {
@@ -42,6 +43,7 @@ ${state.prompt}
     // Remove ```json fences in case the model adds them
     const clean = res.content.replace(/```json|```/g, "").trim()
     const data = JSON.parse(clean)
+    await deductCredits(state.userId , "pdf")
 
     const pdfBuffer = await generatePdf(data)
 

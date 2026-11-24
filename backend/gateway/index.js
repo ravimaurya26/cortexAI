@@ -20,7 +20,7 @@ app.use(morgan("dev"))
 app.use(cookieParser())
 app.use("/api/auth", proxy(process.env.AUTH_SERVICE_URL))
 app.use("/api/chat", protect, proxyWithHeaders(process.env.CHAT_SERVICE_URL))
-app.use("/api/agent", protect, proxy(process.env.AGENT_SERVICE_URL))
+app.use("/api/agent", protect, proxyWithHeaders(process.env.AGENT_SERVICE_URL))
 app.use("/api/billing", protect, proxyWithHeaders(process.env.BILLING_SERVICE_URL))
 app.get("/api/me",protect,getCurrentUser)
 

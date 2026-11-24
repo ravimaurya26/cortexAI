@@ -1,4 +1,5 @@
 import { getModel } from "../config/llmModels.js"
+import { deductCredits } from "../utils/deductCredits.js"
 import { generatePpt } from "../utils/generatePpt.js"
 import { getFromS3 } from "../utils/getFroms3.js"
 import { uploadToS3 } from "../utils/uploadToS3.js"
@@ -45,7 +46,7 @@ ${state.prompt}`
     // Remove ```json fences in case the model adds them
     const clean = res.content.replace(/```json|```/g, "").trim()
     const data = JSON.parse(clean)
-
+    await deductCredits(state.userId , "ppt")
     const ppt = await generatePpt(data)
     const buffer = await ppt.write({
       outputType: "nodebuffer",

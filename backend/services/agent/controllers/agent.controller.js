@@ -6,7 +6,7 @@ import { addMessage } from "../config/memory.js";
 export const agent = async (req, res) => {
 try {
 const { prompt, conversationId,agent } = req.body;
-
+   const userId = req.headers["x-user-id"]
     // Validate request
     if (!prompt || !conversationId) {
         return res.status(400).json({
@@ -16,7 +16,7 @@ const { prompt, conversationId,agent } = req.body;
 
     // Save the user's message in MongoDB
     await axios.post(
-        `${process.env.CHAT_SERVICE_URL}/api/chat/saveMessage`,
+        `${process.env.CHAT_SERVICE_URL}/saveMessage`,
         {
             conversationId,
             role: "user",
@@ -28,7 +28,8 @@ const { prompt, conversationId,agent } = req.body;
     const result = await graph.invoke({
         prompt,
         conversationId,
-        agent
+        agent,
+        userId
     });
 
     // Save the user's message in Redis memory
@@ -43,7 +44,7 @@ const { prompt, conversationId,agent } = req.body;
 
     // Save the assistant's response in MongoDB
     await axios.post(
-        `${process.env.CHAT_SERVICE_URL}/api/chat/saveMessage`,
+        `${process.env.CHAT_SERVICE_URL}/saveMessage`,
         {
             conversationId,
             role: "assistant",
