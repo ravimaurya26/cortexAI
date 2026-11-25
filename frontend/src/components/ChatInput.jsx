@@ -2,12 +2,13 @@ import React, { useState } from 'react'
 import { Paperclip, Mic, Send, Zap, Images } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import sendMessage from '../features/sendMessage'
-import { addMessage,setArtifacts} from '../redux/messageSlice';
+import { addMessage, setArtifacts } from '../redux/messageSlice';
 import { createConversation } from '../features/createConversation';
 import { setSelectedConversation, addConversation } from '../redux/conversationSlice';
 import { updateConversation } from '../features/updateConversation';
 import { setConvTitle } from '../redux/conversationSlice';
 import { MessageSquare, Code2, ImageIcon, Globe, FileText, PresentationIcon } from "lucide-react";
+import { useRef } from 'react';
 
 
 
@@ -15,6 +16,8 @@ import { MessageSquare, Code2, ImageIcon, Globe, FileText, PresentationIcon } fr
 function ChatInput() {
   const [value, setValue] = useState("")
   const [selectedAgent, setSelectedAgent] = useState("Auto")
+  const [selectedFile, setSelectedFile] = useState(null)
+  const fileRef = useRef(null)
   const { selectedConversation } = useSelector((state) => state.conversation)
   const dispatch = useDispatch()
   const handleSendMessage = async () => {
@@ -30,26 +33,29 @@ function ChatInput() {
       dispatch(setConvTitle({ conversationId: conversation?._id, title: value.trim() }))
     }
 
-    if (!selectedConversation?._id) return
+    if (!conversation?._id) return
     const prompt = value.trim()
     if (!prompt) return
 
-    const payload = {
-      prompt,
-      conversationId: conversation._id,agent: selectedAgent.toLowerCase()
-    }
+    const formData = new FormData();
 
+    formData.append("prompt", value.trim());
+    formData.append("conversationId", conversation?._id);
+    formData.append("agent", selectedAgent.toLowerCase());
+    if (selectedFile) {
+    formData.append("file", selectedFile);
+}
     dispatch(addMessage({ role: "user", content: prompt }))
     setValue("")
 
-    const data = await sendMessage(payload)
+    const data = await sendMessage(formData)
     dispatch(setArtifacts(data.artifacts || []))
     console.log(data)
 
 
 
-    if (data?.aiResponse) {
-      dispatch(addMessage({ role: "assistant", content: data?.answer ,images:data.images }))
+    if (data?.answer) {
+      dispatch(addMessage({ role: "assistant", content: data?.answer, images: data.images }))
     }
   }
 
@@ -102,9 +108,9 @@ function ChatInput() {
             return (
 
               <div
-               key={agent.id}
-               onClick={() => setSelectedAgent(agent.label)}
-               className={`flex-shrink-0
+                key={agent.id}
+                onClick={() => setSelectedAgent(agent.label)}
+                className={`flex-shrink-0
                 inline-flex
                 cursor-pointer
                 items-center
@@ -118,10 +124,10 @@ function ChatInput() {
                 transition-all
 
                 ${isActive
-                  ? "bg-gradient-to-r from-indigo-500 to-violet-600 text-white border-transparent shadow-[0_1px_8px_0_rgba(99,102,241,0.5)]"
-                  : "bg-white/[0.03] text-slate-400 border-white/[0.06]  hover:bg-white/[0.07]" 
-                  
-                }
+                    ? "bg-gradient-to-r from-indigo-500 to-violet-600 text-white border-transparent shadow-[0_1px_8px_0_rgba(99,102,241,0.5)]"
+                    : "bg-white/[0.03] text-slate-400 border-white/[0.06]  hover:bg-white/[0.07]"
+
+                  }
               `}>
                 <Icon size={12}
                   className={
@@ -146,7 +152,16 @@ function ChatInput() {
         />
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-1'>
-            <button className='flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.06] transition-all duration-150 bg-transparent cursor-pointer'>
+
+            <input type='file' accept='.pdf,image/*' hidden ref={fileRef} onChange={(e) => {
+              const file = e.target.files[0]
+              if (file) {
+                setSelectedFile(file)
+              }
+            }} />
+
+            <button className='flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 
+            hover:text-slate-400 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.06] transition-all duration-150 bg-transparent cursor-pointer'onClick={() => fileRef.current.click()}>
               <Paperclip size={16} />
             </button>
             <button className='flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.06] transition-all duration-150 bg-transparent cursor-pointer'>
@@ -157,8 +172,8 @@ function ChatInput() {
             disabled={!value.trim()}
             onClick={handleSendMessage}
             className={`flex items-center justify-center w-8 h-8 rounded-lg border-none transition-all duration-150 ${value.trim()
-                ? "bg-gradient-to-r from-indigo-500 to-violet-600 hover:opacity-90 text-white cursor-pointer"
-                : "bg-white/[0.05] text-slate-600 cursor-not-allowed"
+              ? "bg-gradient-to-r from-indigo-500 to-violet-600 hover:opacity-90 text-white cursor-pointer"
+              : "bg-white/[0.05] text-slate-600 cursor-not-allowed"
               }`}
           >
             <Send size={15} />

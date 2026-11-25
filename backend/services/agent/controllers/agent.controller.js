@@ -6,6 +6,7 @@ import { addMessage } from "../config/memory.js";
 export const agent = async (req, res) => {
 try {
 const { prompt, conversationId,agent } = req.body;
+const file = req.file
    const userId = req.headers["x-user-id"]
     // Validate request
     if (!prompt || !conversationId) {
@@ -29,7 +30,8 @@ const { prompt, conversationId,agent } = req.body;
         prompt,
         conversationId,
         agent,
-        userId
+        userId,
+        file
     });
 
     // Save the user's message in Redis memory
@@ -61,8 +63,10 @@ const { prompt, conversationId,agent } = req.body;
         artifacts:result.artifacts
     });
 
-} catch (error) {
-    console.error("AGENT ERROR:", error.message);
+}  catch (error) {
+    console.error("AGENT ERROR:", error.response?.data || error.stack || error.message);
+    console.error("ERROR URL:", error.config?.url);
+    console.error("ERROR STATUS:", error.response?.status);
 
     return res.status(500).json({
         message: `Error in agent: ${error.message}`
