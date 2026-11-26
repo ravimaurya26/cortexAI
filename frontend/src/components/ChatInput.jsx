@@ -7,7 +7,7 @@ import { createConversation } from '../features/createConversation';
 import { setSelectedConversation, addConversation } from '../redux/conversationSlice';
 import { updateConversation } from '../features/updateConversation';
 import { setConvTitle } from '../redux/conversationSlice';
-import { MessageSquare, Code2, ImageIcon, Globe, FileText, PresentationIcon } from "lucide-react";
+import { MessageSquare, Code2, ImageIcon, Globe, FileText, PresentationIcon,X } from "lucide-react";
 import { useRef } from 'react';
 
 
@@ -37,14 +37,15 @@ function ChatInput() {
     const prompt = value.trim()
     if (!prompt) return
 
-    const formData = new FormData();
 
+    console.log(selectedFile)
+    const formData = new FormData();
     formData.append("prompt", value.trim());
     formData.append("conversationId", conversation?._id);
     formData.append("agent", selectedAgent.toLowerCase());
     if (selectedFile) {
-    formData.append("file", selectedFile);
-}
+      formData.append("file", selectedFile);
+    }
     dispatch(addMessage({ role: "user", content: prompt }))
     setValue("")
 
@@ -142,7 +143,50 @@ function ChatInput() {
           })}
 
         </div>
+        
+        {selectedFile && (
+          <div className="my-3">
+            <div className="inline-flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">
 
+              {selectedFile.type === "application/pdf" ? (
+                <FileText size={20} className="text-red-400" />
+              ) : selectedFile.type.startsWith("image/") ? (
+                <img
+                  src={URL.createObjectURL(selectedFile)}
+                  alt="Selected file"
+                  className="h-10 w-10 rounded-xl object-cover"
+                />
+              ) : null}
+
+              <div>
+                <p className="text-xs text-white">
+                  {selectedFile.name}
+                </p>
+
+                <p className="text-[10px] text-slate-500">
+                  {(selectedFile.size / 1024).toFixed(2)} KB
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="ml-2"
+                onClick={() => {
+                  setSelectedFile(null);
+                  fileRef.current.value = "";
+                }}
+              >
+                <X
+                  size={14}
+                  className="text-slate-500 hover:text-white"
+                />
+              </button>
+
+            </div>
+          </div>
+        )}
+
+        
         <textarea
           placeholder='Ask Anything...'
           onChange={(e) => setValue(e.target.value)}

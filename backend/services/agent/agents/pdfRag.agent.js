@@ -37,7 +37,7 @@ export const pdfRag = async (state) => {
       .map((d) => d.pageContent)
       .join("\n\n");
 
-    const llm = await getModel("pdf-rag");
+    const llm = await getModel("pdf");
 
     const messages = [
       new SystemMessage(`

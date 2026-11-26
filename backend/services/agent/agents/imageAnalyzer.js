@@ -45,19 +45,24 @@ Rules:
     ];
 
     const response = await llm.invoke(messages);
+    
     await deductCredits(state.userId,"vision")
     return {
       ...state,
       aiResponse: response.content,
     };
-  } catch (error) {
-    console.log(error);
+  }
+   catch (error) {
+    console.log("Image Analysis Error:", error);
 
     return {
-      ...state,
-      aiResponse: "Failed to analyze file",
+        ...state,
+        aiResponse: error.status === 503
+            ? "Gemini is currently experiencing high demand. Please try again in a few moments."
+            : "Failed to analyze image. Please try again.",
     };
-  } 
+}
+  
   finally {
   if (state.file?.path) {
     try {
