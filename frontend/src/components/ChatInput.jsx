@@ -50,6 +50,7 @@ function ChatInput() {
     setValue("")
 
     const data = await sendMessage(formData)
+    setSelectedFile(null)
     dispatch(setArtifacts(data.artifacts || []))
     console.log(data)
 
@@ -143,7 +144,7 @@ function ChatInput() {
           })}
 
         </div>
-        
+
         {selectedFile && (
           <div className="my-3">
             <div className="inline-flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2">

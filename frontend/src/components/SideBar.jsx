@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Coins,
-  LogOut,
-  PanelLeftIcon,
-  PanelRight,
-  PenSquare,
-  Plus,
-  User,
-  MessageSquare,
-} from 'lucide-react';
+  Coins,LogOut, PanelLeftIcon,PanelRight,PenSquare,Plus,User, MessageSquare,Menu,X} from 'lucide-react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -44,7 +36,8 @@ function SideBar() {
     userData
   } = useSelector((state) => state.user);
 
-  const [showBilling,setShowBilling]= useState(false)
+  const [showBilling, setShowBilling] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
 
   useEffect(() => {
@@ -233,280 +226,212 @@ function SideBar() {
   =====================================================
   */
 
-  return (
+  /*
+=====================================================
+NORMAL / EXPANDED SIDEBAR
+=====================================================
+*/
 
-    <div
-      className={`fixed lg:static inset-y-0 left-0 z-50 h-screen
-      bg-[#0d0f14] border-r border-white/[0.06]
-      ${collapsed ? 'w-0 overflow-hidden' : 'w-[250px]'}`}
+return (
+  <>
+    {/* Mobile menu button */}
+    <button
+      className="lg:hidden fixed top-3.5 left-4 z-50 flex items-center justify-center w-8 h-8 rounded-lg bg-[#0d0d14] border border-white/[0.06] text-slate-400 hover:text-slate-200 transition-colors duration-150 cursor-pointer"
+      onClick={() => setMobileOpen(true)}
     >
+      <Menu size={14} />
+    </button>
 
+    {/* Mobile backdrop */}
+    {mobileOpen && (
+      <div
+        onClick={() => setMobileOpen(false)}
+        className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+      />
+    )}
+
+    {/* Sidebar container */}
+    <div
+      className={`fixed lg:static inset-y-0 left-0 z-50
+        w-[270px] h-screen shrink-0
+        bg-[#0d0f14] border-r border-white/[0.06]
+        transition-transform duration-300 ease-in-out
+        ${
+          mobileOpen
+            ? "translate-x-0"
+            : "-translate-x-full lg:translate-x-0"
+        }`}
+    >
       <div className="flex flex-col h-full">
 
+        {/* Sidebar Header */}
+        <div className="flex items-center gap-2.5 px-4 py-4 border-b border-white/[0.06]">
 
-        {/* Header */}
-
-        <div className="flex items-center gap-2.5 px-4 py-4
-        border-b border-white/[0.06]">
-
-
-          <div
-            className="hidden lg:flex items-center justify-center
-            w-7 h-7 rounded-lg text-slate-500
-            hover:text-slate-200 hover:bg-white/[0.05]
-            transition-colors duration-150 bg-transparent
-            border-none cursor-pointer"
-
+          {/* Collapse Button - Desktop */}
+          <button
+            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
             onClick={() => setCollapsed(true)}
+            title="Collapse Sidebar"
           >
+            <PanelLeftIcon size={16} />
+          </button>
 
-            <PanelLeftIcon size={18} />
-
-          </div>
-
-
-          <span
-            className="text-[16px] font-semibold text-slate-100
-            tracking-tight flex-1"
+          {/* Close Button - Mobile */}
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="lg:hidden flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
           >
+            <X size={16} />
+          </button>
+
+          {/* App Name */}
+          <span className="text-[16px] font-semibold text-slate-100 tracking-tight flex-1">
             CortexAI
           </span>
 
-
-          <span
-            className="text-[10px] font-medium text-indigo-400
-            bg-indigo-500/10 border border-indigo-500/20
-            px-2 py-0.5 rounded-full tracking-wide"
-          >
+          {/* Plan Badge */}
+          <span className="text-[10px] font-medium text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full tracking-wide">
             free
           </span>
 
-
+          {/* New Chat Icon */}
           <button
-            className="flex items-center justify-center w-7 h-7
-            rounded-lg text-slate-500 hover:text-slate-200
-            hover:bg-white/[0.05] transition-colors duration-150
-            bg-transparent border-none cursor-pointer"
+            className="flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
+            onClick={handleNewChat}
+            title="New Chat"
           >
-            <PenSquare size={16} />
+            <PenSquare size={14} />
           </button>
-
         </div>
 
-
-        {/* New Chat */}
-
+        {/* New Chat Button */}
         <div className="px-4 pt-4 pb-1">
-
           <button
-            className="w-full flex items-center justify-center gap-2
-            py-2.5 rounded-lg text-[15px] font-semibold text-white
-            bg-gradient-to-r from-indigo-500 to-violet-500
-            hover:from-indigo-400 hover:to-violet-400
-            shadow-lg shadow-indigo-500/25
-            hover:shadow-indigo-500/40
-            transition-all duration-200 hover:-translate-y-0.5
-            border-none cursor-pointer"
-
-            onClick={() => dispatch(setSelectedConversation(null))}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-[15px] font-semibold text-white bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-400 hover:to-violet-400 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all duration-200 hover:-translate-y-0.5 border-none cursor-pointer"
+            onClick={handleNewChat}
           >
-
             <Plus size={15} />
-
             New Chat
-
           </button>
-
         </div>
-
 
         {/* Conversations */}
-
         <div className="flex-1 overflow-y-auto px-3 pt-4">
 
           {conversations.length > 0 ? (
-
             <>
-
-              <div
-                className="px-2 pb-2 text-[10.5px] font-semibold
-                uppercase tracking-widest text-slate-600"
-              >
+              <div className="px-2 pb-2 text-[10.5px] font-semibold uppercase tracking-widest text-slate-600">
                 Recent Conversations
               </div>
 
-
               <div className="space-y-1">
-
                 {conversations.map((conversation) => (
-
-                  <div
+                  <button
                     key={conversation._id}
                     onClick={() => {
                       dispatch(setSelectedConversation(conversation));
+                      setMobileOpen(false);
                     }}
-                    className={`px-3 py-2.5 rounded-lg
-                    text-sm cursor-pointer transition-colors
-                        ${selectedConversation?._id === conversation._id
+                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm border-none cursor-pointer transition-colors duration-150 ${
+                      selectedConversation?._id === conversation._id
                         ? "bg-indigo-500/10 text-indigo-400"
-                        : "text-slate-300 hover:bg-white/[0.05] hover:text-slate-100"
-                      }`}
+                        : "bg-transparent text-slate-300 hover:bg-white/[0.05] hover:text-slate-100"
+                    }`}
                   >
-                    {conversation.title || 'New Conversation'}
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <MessageSquare size={14} className="shrink-0" />
 
+                      <span className="truncate">
+                        {conversation.title || "New Conversation"}
+                      </span>
+                    </div>
+                  </button>
                 ))}
-
               </div>
-
             </>
-
           ) : (
-
-            <div
-              className="px-2 pt-2 text-[11px]
-              text-slate-600 text-center"
-            >
+            <div className="px-2 pt-2 text-[11px] text-slate-600 text-center">
               No Recent Conversations
             </div>
-
           )}
-
         </div>
 
-
-        {/* User Section */}
-
+        {/* Divider */}
         <div className="mx-2.5 h-px bg-white/[0.06]" />
 
+        {/* User Section */}
         <div className="px-3.5 py-3.5">
 
           {userData ? (
-
-            <div
-              className="flex items-center gap-2.5 cursor-pointer
-              rounded-xl px-3 py-2.5
-              hover:bg-white/[0.05]
-              transition-colors duration-150"
-            >
+            <div className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 hover:bg-white/[0.05] transition-colors duration-150">
 
               {/* Avatar */}
-
               <div className="relative shrink-0">
-
                 {userData?.avatar && !imageError ? (
-
                   <img
-                    className="w-9 h-9 rounded-xl object-cover
-                    border-2 border-indigo-500/25"
-
+                    className="w-9 h-9 rounded-xl object-cover border-2 border-indigo-500/25"
                     src={userData.avatar}
-
                     alt="User"
-
                     onError={() => setImageError(true)}
                   />
-
                 ) : (
-
-                  <div
-                    className="w-9 h-9 rounded-xl
-                    border-2 border-indigo-500/25
-                    flex items-center justify-center
-                    text-slate-500"
-                  >
-
+                  <div className="w-9 h-9 rounded-xl border-2 border-indigo-500/25 flex items-center justify-center text-slate-500">
                     <User size={17} />
-
                   </div>
-
                 )}
-
               </div>
 
-
               {/* User Info */}
-
               <div className="flex-1 min-w-0">
-
-                <p
-                  className="text-[13.5px] font-semibold
-                  text-slate-100 truncate"
-                >
-                  {userData?.name || "user"}
+                <p className="text-[13.5px] font-semibold text-slate-100 truncate">
+                  {userData?.name || "User"}
                 </p>
 
                 <p className="text-[11px] text-slate-600 mt-px">
                   Free Plan
                 </p>
-
               </div>
 
+              {/* Billing */}
+              <button
+                onClick={() => setShowBilling(true)}
+                title="Billing"
+                className="flex items-center justify-center w-7 h-7 rounded-[7px] border-none bg-transparent text-yellow-600 cursor-pointer hover:bg-white/10 hover:text-slate-400 transition-all duration-150"
+              >
+                <Coins size={16} />
+              </button>
 
-              {/* Buttons */}
-
-              <div className="flex gap-1">
-
-                <button
-                  onClick={()=>setShowBilling(true)}
-                  className="flex items-center justify-center
-                  w-7 h-7 rounded-[7px] border-none
-                  bg-transparent text-yellow-600 cursor-pointer
-                  hover:bg-white/10 hover:text-slate-400
-                  transition-all duration-150"
-                >
-
-                  <Coins size={16} />
-
-                </button>
-
-
-                <button
-                  className="flex items-center justify-center
-                  w-7 h-7 rounded-[7px] border-none
-                  bg-transparent text-slate-600 cursor-pointer
-                  hover:bg-white/10 hover:text-slate-400
-                  transition-all duration-150"
-
-                  onClick={() => {
-
-                    logOut();
-
-                    dispatch(setUserdata(null));
-
-                  }}
-                >
-
-                  <LogOut size={16} />
-
-                </button>
-
-              </div>
-
+              {/* Logout */}
+              <button
+                title="Logout"
+                className="flex items-center justify-center w-7 h-7 rounded-[7px] border-none bg-transparent text-slate-600 cursor-pointer hover:bg-white/10 hover:text-slate-400 transition-all duration-150"
+                onClick={() => {
+                  logOut();
+                  dispatch(setUserdata(null));
+                  dispatch(setConversation([]));
+                  dispatch(setSelectedConversation(null));
+                  dispatch(setMessages([]));
+                }}
+              >
+                <LogOut size={16} />
+              </button>
             </div>
-
           ) : (
-
-            <button>
+            <button className="text-slate-400">
               Login
             </button>
-
           )}
-
         </div>
-
       </div>
 
-      <BillingDrawer
-      open={showBilling}
-      onClose={()=>setShowBilling(false) }
-      />
-
+     
     </div>
+     {/* Billing Drawer */}
+      <BillingDrawer
+        open={showBilling}
+        onClose={() => setShowBilling(false)}
+      />
+  </>
+)}
 
-  );
-
-}
-
-
-export default SideBar;
+export default SideBar
