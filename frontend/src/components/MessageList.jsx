@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import MessageBubble from "./MessageBubble";
+import LoadingAnimation from "./LoadingAnimation";
 
 function MessageList() {
     const { selectedConversation } = useSelector(
         (state) => state.conversation
     );
 
-    const { messages = [] } = useSelector(
+    const { messages = [],isLoading } = useSelector(
         (state) => state.message
     );
+    const bottemRef = useRef(null)
+    
+    useEffect(()=>{
+        requestAnimationFrame(()=>{                   //this is for auto scrolling
+            bottemRef?.current.scrollIntoView({
+                behavior:"smooth",
+                block:"end"
+            })
+        })
+    },[messages?.length,isLoading])
+
 
     const safeMessages = Array.isArray(messages) ? messages : [];
 
@@ -74,8 +86,11 @@ function MessageList() {
                             />
                         </div>
                     ))}
+
+                   {isLoading && <LoadingAnimation/>}
                 </div>
             )}
+            <div ref={bottemRef}/>
         </div>
     );
 }

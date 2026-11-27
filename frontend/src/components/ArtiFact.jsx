@@ -4,6 +4,7 @@ import { motion ,AnimatePresence} from "motion/react"
 import { useState } from 'react'
 import Editor from '@monaco-editor/react'
 
+
 function Artifact() {
   const [collapsed, setCollapsed] = useState(false)
   const { artifacts } = useSelector(state => state.message)

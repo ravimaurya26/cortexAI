@@ -3,9 +3,12 @@ import axios from "axios"
 import { uploadToS3 } from "../utils/uploadToS3.js"
 import { getFromS3 } from "../utils/getFroms3.js"
 import { deductCredits } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentlimits.js";
 
 export const visionAgent = async (state) => {
   try {
+
+    await checkAgentLimit(state.userId,"image")
     const llm = await getModel("image")
     const res = await llm.invoke(`
 You are an elite AI image prompt engineer.
@@ -68,10 +71,10 @@ ${state.prompt}
 
     return { ...state, aiResponse }
   } catch (error) {
-    console.error("visionAgent error:", error.message)
+    console.log(error)
     return {
       ...state,
-      aiResponse: "❌ Failed to generate Image",
+      aiResponse: error?.data?.message || "❌ Failed to generate image",
     }
   }
 }

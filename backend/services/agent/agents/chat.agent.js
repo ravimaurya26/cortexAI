@@ -3,10 +3,11 @@ import { getMemory } from "../config/memory.js";
 
 import {SystemMessage,HumanMessage,AIMessage} from "@langchain/core/messages";
 import { deductCredits } from "../utils/deductCredits.js";
+import { checkAgentLimit } from "../config/agentlimits.js";
 
 export const chatAgent = async (state) => {
 
-    
+    await checkAgentLimit(state.userId,"chat")
     const llm = await getModel("chat");
 
     // Get previous conversation history

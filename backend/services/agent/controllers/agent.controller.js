@@ -3,7 +3,7 @@ import { graph } from "../graph/graph.js";
 import { addMessage } from "../config/memory.js";
 
 
-export const agent = async (req, res) => {
+export const agent = async (req, res, next) => {
 try {
 const { prompt, conversationId,agent } = req.body;
 const file = req.file
@@ -64,13 +64,7 @@ const file = req.file
     });
 
 }  catch (error) {
-    console.error("AGENT ERROR:", error.response?.data || error.stack || error.message);
-    console.error("ERROR URL:", error.config?.url);
-    console.error("ERROR STATUS:", error.response?.status);
-
-    return res.status(500).json({
-        message: `Error in agent: ${error.message}`
-    });
+    next(error)
 }
 
 };
